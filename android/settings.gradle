@@ -1,0 +1,3 @@
+rootProject.name = 'ARGameRN'
+
+include ':app'
