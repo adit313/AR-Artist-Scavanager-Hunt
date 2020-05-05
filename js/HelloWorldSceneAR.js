@@ -77,6 +77,37 @@ const letters = [
   require('./res/z.png'),
 ]
 
+const imageArray = [
+  [require('./res/aa.jpg'),(628/480)],
+  [require('./res/bb.jpg'),(493/767)],
+  [require('./res/cc.jpg'),(924/768)],
+  [require('./res/dd.jpg'),(768/768)],
+  [require('./res/ee.jpg'),(588/480)],
+  [require('./res/ff.jpg'),(640/458)],
+  [require('./res/gg.jpg'),(628/480)],
+  [require('./res/hh.jpg'),(632/480)],
+  [require('./res/ii.jpg'),(608/480)],
+  [require('./res/jj.jpg'),(640/410)],
+  [require('./res/kk.jpg'),(599/480)],
+  [require('./res/ll.jpg'),(445/600)],
+  [require('./res/mm.jpg'),(640/412)],
+  [require('./res/nn.jpg'),(590/480)],
+  [require('./res/oo.jpg'),(386/480)],
+  [require('./res/pp.jpg'),(540/480)],
+  [require('./res/qq.jpg'),(640/467)],
+  [require('./res/rr.jpg'),(601/480)],
+  [require('./res/ss.jpg'),(527/480)],
+  [require('./res/tt.jpg'),(479/480)],
+]
+
+const findImages = [
+  [require('./res/find1painting.jpg'),(626/480)],
+]
+
+const findInstructions = [
+  require('./res/find1.png')
+]
+
 const letterChar = [
   "A",
   "B",
@@ -217,7 +248,7 @@ export default class HelloWorldSceneAR extends Component {
   }
 
   gameStart = () => {
-    var intervalId = setInterval(this.timer, 1000);
+    var intervalId = setInterval(this.timer, 2000);
     this.setState({intervalId: intervalId, gameStatus: "playing", counter: 30});
   }
 
@@ -228,6 +259,15 @@ export default class HelloWorldSceneAR extends Component {
     } else {
         this.losingChoice()
     }
+ }
+
+ renderFind = () => {
+  return(<ViroImage
+    height={0.6}
+    width={0.45}
+    source={findInstructions[0]}
+    position={[0,0,-0.5]}
+  />)
  }
  
 
@@ -244,16 +284,17 @@ export default class HelloWorldSceneAR extends Component {
 
   renderBoxes = () => {
     let result = []
-    for (let i = 0; i < 10; i++) {
-      result.push(<ViroBox 
-        key={i}
-        height={0.2} 
-        length={0.2} 
-        width={0.2} 
-        position={numArray[i]} 
-        materials={["test"]}
-        onClick={this.losingChoice}
-        animation={{name:'animateTest', run:(this.state.gameStatus==="loss")}}
+    for (let i = 0; i < 6*(this.state.difficulty+1); i++) {
+      result.push(      
+        <ViroImage
+            key={i}
+            height={0.5}
+            width={0.5*(imageArray[i][1])}
+            source={imageArray[i][0]}
+            position={numArray[i]}
+            opacity = {0}
+            onClick={this.losingChoice}
+            animation={{name:'animateImageLoad', run:true}} 
         />)
     }
     return result
@@ -286,15 +327,13 @@ export default class HelloWorldSceneAR extends Component {
   }
  
   renderWinningBox = () => {
-      return(<ViroBox 
-        key={100}
-        height={0.2} 
-        length={0.2} 
-        width={0.2} 
-        position={[winningCubeX, winningCubeY, winningCubeZ]} 
-        materials={["victory"]}
-        onClick={this.winningChoice}
-        />)
+      return(<ViroImage
+                height={0.5}
+                width={0.5*(findImages[0][1])}
+                source={findImages[0][0]}
+                position={[winningCubeX, winningCubeY, winningCubeZ]}
+                onClick={this.winningChoice}
+            />)
     } 
 
   winningChoice = () => {
@@ -426,6 +465,7 @@ export default class HelloWorldSceneAR extends Component {
         {this.state.gameStatus==="initialize" ? this.renderInfo() : null}
         {this.state.gameStatus==="initialize" ? this.renderSetup() : null}
         {this.state.gameStatus==="initialize" ? this.renderLeaderboard() : null}
+        {this.state.gameStatus==="playing" ? this.renderFind() : null}
         {this.state.gameStatus==="playing" ? this.renderBoxes() : null}
         {this.state.gameStatus==="playing" ? this.renderWinningBox() : null}
         {this.state.gameStatus==="playing" ? this.renderCountdown() : null}
@@ -466,5 +506,15 @@ ViroAnimations.registerAnimations({
                 easing:"Linear", 
                 duration: 5000},
 });
+
+ViroAnimations.registerAnimations({
+  animateImageLoad:{
+                properties:{opacity: 1.0},
+                duration: 1000,
+                delay:7000
+              },
+                
+});
+
 
 module.exports = HelloWorldSceneAR;
