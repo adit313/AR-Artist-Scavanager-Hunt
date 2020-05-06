@@ -169,7 +169,8 @@ export default class HelloWorldSceneAR extends Component {
       middleNameInitial: 0,
       lastNameInitial: 0,
       highScores: [],
-      showBoxes: false
+      showBoxes: false,
+      ready: false
     };
 
     // bind 'this' to functions
@@ -191,7 +192,7 @@ export default class HelloWorldSceneAR extends Component {
           <ViroImage
               height={0.1}
               width={0.1625}
-              position={[-0.2,0,-0.5]}
+              position={[-0.3,0,-0.5]}
               source={require("./res/easy.png")}
               onClick={this.difficultyChange}
           />
@@ -202,7 +203,7 @@ export default class HelloWorldSceneAR extends Component {
           <ViroImage
               height={0.1}
               width={0.1625}
-              position={[-0.2,0,-0.5]}
+              position={[-0.3,0,-0.5]}
               source={require("./res/medium.png")}
               onClick={this.difficultyChange}
           />
@@ -213,7 +214,7 @@ export default class HelloWorldSceneAR extends Component {
           <ViroImage
               height={0.1}
               width={0.1625}
-              position={[-0.2,0,-0.5]}
+              position={[-0.3,0,-0.5]}
               source={require("./res/hard.png")}
               onClick={this.difficultyChange}
           />
@@ -222,17 +223,33 @@ export default class HelloWorldSceneAR extends Component {
   }
 
   renderInfo = () => {
-    return(
+    return([
     <ViroImage
+        key={1}
         height={0.4}
         width={0.9}
-        position={[0, 0.3,-0.5]}
+        position={[0, 0.3,-0.51]}
         source={require("./res/info.png")}
-        onClick={this.gameStart}
         renderingOrder={-1}
         placeholderSource={require("./res/white.png")}
+        onLoadEnd={this.ready}
+    />,
+    <ViroImage
+        key={2}
+        height={0.1}
+        width={0.25}
+        position={[0.25, 0,-0.51]}
+        source={require("./res/start.png")}
+        onClick={this.state.ready? this.gameStart: null}
+        opacity = {0}
+        animation = {{name:'animateImageLoad', run: this.state.ready}}
     />
+      ]
     )
+  }
+
+  ready =() => {
+    this.setState({ready :true})
   }
 
   renderLeaderboard = () => {
@@ -303,7 +320,7 @@ export default class HelloWorldSceneAR extends Component {
             position={numArray[i]}
             opacity = {0}
             materials={["test"]}
-            onClick={this.losingChoice}
+            onClick={this.state.gameStatus==="playing" ? this.losingChoice : null}
             animation={this.boxesAnimationController()} 
         />)
     }
