@@ -333,6 +333,7 @@ export default class HelloWorldSceneAR extends Component {
                 source={findImages[0][0]}
                 position={[winningCubeX, winningCubeY, winningCubeZ]}
                 onClick={this.winningChoice}
+                animation={{name:'animateImageLoad', run:true}}
             />)
     } 
 
@@ -511,7 +512,7 @@ ViroAnimations.registerAnimations({
   animateImageLoad:{
                 properties:{opacity: 1.0},
                 duration: 1000,
-                delay:7000
+                delay:4000
               },
                 
 });
