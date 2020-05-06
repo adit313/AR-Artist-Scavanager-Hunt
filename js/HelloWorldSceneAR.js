@@ -102,10 +102,14 @@ const imageArray = [
 
 const findImages = [
   [require('./res/find1painting.jpg'),(626/480)],
+  [require('./res/find2painting.jpg'),(640/406)],
+  [require('./res/find3painting.jpg'),(640/463)],
 ]
 
 const findInstructions = [
-  require('./res/find1.png')
+  require('./res/find1.png'),
+  require('./res/find2.png'),
+  require('./res/find3.png'),
 ]
 
 const letterChar = [
@@ -265,7 +269,7 @@ export default class HelloWorldSceneAR extends Component {
   return(<ViroImage
     height={0.6}
     width={0.45}
-    source={findInstructions[0]}
+    source={findInstructions[this.state.difficulty]}
     position={[0,0,-0.5]}
   />)
  }
@@ -329,8 +333,8 @@ export default class HelloWorldSceneAR extends Component {
   renderWinningBox = () => {
       return(<ViroImage
                 height={0.5}
-                width={0.5*(findImages[0][1])}
-                source={findImages[0][0]}
+                width={0.5*(findImages[this.state.difficulty][1])}
+                source={findImages[this.state.difficulty][0]}
                 position={[winningCubeX, winningCubeY, winningCubeZ]}
                 onClick={this.winningChoice}
                 animation={{name:'animateImageLoad', run:true}}
@@ -465,7 +469,7 @@ export default class HelloWorldSceneAR extends Component {
       <ViroARScene onTrackingUpdated={this._onInitialized} >
         {this.state.gameStatus==="initialize" ? this.renderInfo() : null}
         {this.state.gameStatus==="initialize" ? this.renderSetup() : null}
-        {this.state.gameStatus==="initialize" ? this.renderLeaderboard() : null}
+        {/* {this.state.gameStatus==="initialize" ? this.renderLeaderboard() : null} */}
         {this.state.gameStatus==="playing" ? this.renderFind() : null}
         {this.state.gameStatus==="playing" ? this.renderBoxes() : null}
         {this.state.gameStatus==="playing" ? this.renderWinningBox() : null}
