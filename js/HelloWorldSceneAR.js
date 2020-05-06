@@ -229,6 +229,8 @@ export default class HelloWorldSceneAR extends Component {
         position={[0, 0.3,-0.5]}
         source={require("./res/info.png")}
         onClick={this.gameStart}
+        renderingOrder={-1}
+        placeholderSource={require("./res/white.png")}
     />
     )
   }
@@ -273,7 +275,7 @@ export default class HelloWorldSceneAR extends Component {
     source={findInstructions[this.state.difficulty]}
     position={[0,0,-0.6]}
     opacity = {0}
-    animation={{name:'animateImageLoad', run: this.state.showBoxes}}
+    animation={this.boxesAnimationController()}
   />)
  }
  
@@ -300,8 +302,9 @@ export default class HelloWorldSceneAR extends Component {
             source={imageArray[i][0]}
             position={numArray[i]}
             opacity = {0}
+            materials={["test"]}
             onClick={this.losingChoice}
-            animation={{name:'animateImageLoad', run: this.state.showBoxes}} 
+            animation={this.boxesAnimationController()} 
         />)
     }
     return result
@@ -341,7 +344,7 @@ export default class HelloWorldSceneAR extends Component {
                 position={[winningCubeX, winningCubeY, winningCubeZ]}
                 onClick={this.winningChoice}
                 opacity = {0}
-                animation={{name:'animateImageLoad', run: this.state.showBoxes}}
+                animation={this.boxesAnimationController()}
             />)
     } 
 
@@ -448,6 +451,7 @@ export default class HelloWorldSceneAR extends Component {
   }
 
   submit = () => {
+    this.reset()
     this.setState({gameStatus: "initialize"})
     fetch("https://argameinnativebackend.herokuapp.com/users", {
       method: 'POST',
@@ -469,10 +473,18 @@ export default class HelloWorldSceneAR extends Component {
   }
 
   boxesAnimationController = () => {
-    if (this.state.gameStatus === "playing") {return {name:'animateImageLoad', run: this.state.showBoxes}}
-    if (this.state.gameStatus === "loss") {return {name:'animateImageLoad', run: this.state.showBoxes}}
-    if (this.state.gameStatus === "victory") {return {name:'animateImageLoad', run: this.state.showBoxes}}
+    if (this.state.gameStatus === "playing") {return {name:'animateImageLoad', run: true}}
+    if (this.state.gameStatus === "loss") {return {name:'loss', run:true, onFinish: this.reset}}
+    if (this.state.gameStatus === "victory") {return {name:'loopRotate', run:true, loop:true}}
     return null
+  }
+
+  reset = () => {
+      numArray=[]
+      for (var i=0;i<101;++i) numArray.push([(Math.random()-0.5)*5, (Math.random())*2.5, (Math.random()*-5)]);
+        winningCubeX = (Math.random()-0.5)*5
+        winningCubeY = (Math.random())*2.5
+        winningCubeZ = (Math.random()*-5)
   }
 
   render() {
@@ -515,10 +527,10 @@ var styles = StyleSheet.create({
   },
 });
 
-ViroMaterials.createMaterials({ test: { diffuseColor: "#B090A8"}, victory: { diffuseColor: "#081723"}, loss: {diffuseColor: "#2B3032"}});
+ViroMaterials.createMaterials({ test: { diffuseColor: "#FFFFFF"}, victory: { diffuseColor: "#081723"}, loss: {diffuseColor: "#2B3032"}});
 
 ViroAnimations.registerAnimations({
-  animateTest:{properties:{positionY:-0.5, material:"loss", rotateY:"+=45"},
+  loss:{properties:{positionX: 0, positionY: 0.6, positionZ:-0.5, opacity: 0},
                 easing:"Linear", 
                 duration: 5000},
 });
@@ -528,8 +540,11 @@ ViroAnimations.registerAnimations({
                 properties:{opacity: 1.0},
                 duration: 1000,
                 delay:300
-              },
-                
+              }, 
+});
+
+ViroAnimations.registerAnimations({
+  loopRotate:{properties:{rotateY:"+=45"}, duration:1000},
 });
 
 
