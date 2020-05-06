@@ -168,7 +168,8 @@ export default class HelloWorldSceneAR extends Component {
       firstNameInitial: 0,
       middleNameInitial: 0,
       lastNameInitial: 0,
-      highScores: []
+      highScores: [],
+      showBoxes: false
     };
 
     // bind 'this' to functions
@@ -253,7 +254,7 @@ export default class HelloWorldSceneAR extends Component {
 
   gameStart = () => {
     var intervalId = setInterval(this.timer, 2000);
-    this.setState({intervalId: intervalId, gameStatus: "playing", counter: 30});
+    this.setState({intervalId: intervalId, gameStatus: "playing", counter: 30, showBoxes: true});
   }
 
   timer = () => {
@@ -270,7 +271,9 @@ export default class HelloWorldSceneAR extends Component {
     height={0.6}
     width={0.45}
     source={findInstructions[this.state.difficulty]}
-    position={[0,0,-0.5]}
+    position={[0,0,-0.6]}
+    opacity = {0}
+    animation={{name:'animateImageLoad', run: this.state.showBoxes}}
   />)
  }
  
@@ -288,7 +291,7 @@ export default class HelloWorldSceneAR extends Component {
 
   renderBoxes = () => {
     let result = []
-    for (let i = 0; i < 6*(this.state.difficulty+1); i++) {
+    for (let i = 0; i < 20; i++) {
       result.push(      
         <ViroImage
             key={i}
@@ -298,7 +301,7 @@ export default class HelloWorldSceneAR extends Component {
             position={numArray[i]}
             opacity = {0}
             onClick={this.losingChoice}
-            animation={{name:'animateImageLoad', run:true}} 
+            animation={{name:'animateImageLoad', run: this.state.showBoxes}} 
         />)
     }
     return result
@@ -337,7 +340,8 @@ export default class HelloWorldSceneAR extends Component {
                 source={findImages[this.state.difficulty][0]}
                 position={[winningCubeX, winningCubeY, winningCubeZ]}
                 onClick={this.winningChoice}
-                animation={{name:'animateImageLoad', run:true}}
+                opacity = {0}
+                animation={{name:'animateImageLoad', run: this.state.showBoxes}}
             />)
     } 
 
@@ -464,15 +468,22 @@ export default class HelloWorldSceneAR extends Component {
         }})
   }
 
+  boxesAnimationController = () => {
+    if (this.state.gameStatus === "playing") {return {name:'animateImageLoad', run: this.state.showBoxes}}
+    if (this.state.gameStatus === "loss") {return {name:'animateImageLoad', run: this.state.showBoxes}}
+    if (this.state.gameStatus === "victory") {return {name:'animateImageLoad', run: this.state.showBoxes}}
+    return null
+  }
+
   render() {
     return (
       <ViroARScene onTrackingUpdated={this._onInitialized} >
         {this.state.gameStatus==="initialize" ? this.renderInfo() : null}
         {this.state.gameStatus==="initialize" ? this.renderSetup() : null}
+        {this.renderBoxes()}
+        {this.renderWinningBox()}
         {/* {this.state.gameStatus==="initialize" ? this.renderLeaderboard() : null} */}
-        {this.state.gameStatus==="playing" ? this.renderFind() : null}
-        {this.state.gameStatus==="playing" ? this.renderBoxes() : null}
-        {this.state.gameStatus==="playing" ? this.renderWinningBox() : null}
+        {this.renderFind()}
         {this.state.gameStatus==="playing" ? this.renderCountdown() : null}
         {this.state.gameStatus==="loss" ? this.renderGameover() : null}
         {this.state.gameStatus==="loss" ? this.renderBoxes() : null}
@@ -516,7 +527,7 @@ ViroAnimations.registerAnimations({
   animateImageLoad:{
                 properties:{opacity: 1.0},
                 duration: 1000,
-                delay:4000
+                delay:300
               },
                 
 });
