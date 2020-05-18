@@ -1,5 +1,6 @@
 # AR-Artist-Scavanager-Hunt
 AR Artist Scavanger Hunt
+Video Explanation of game: https://youtu.be/5276XtKWpwY
 
 To run:
 
