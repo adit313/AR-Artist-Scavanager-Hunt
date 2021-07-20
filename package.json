@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "react": "16.8.3",
-    "react-native": "0.59.9",
+    "react-native": "0.62.3",
     "react-native-device-info": "^5.5.6",
     "react-viro": "2.17.0"
   },
